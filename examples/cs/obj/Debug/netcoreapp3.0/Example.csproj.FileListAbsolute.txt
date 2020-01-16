@@ -1,0 +1,12 @@
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/Example
+/home/sly/code/mothra/examples/cs/obj/Debug/netcoreapp3.0/Example.csprojAssemblyReference.cache
+/home/sly/code/mothra/examples/cs/obj/Debug/netcoreapp3.0/Example.AssemblyInfoInputs.cache
+/home/sly/code/mothra/examples/cs/obj/Debug/netcoreapp3.0/Example.AssemblyInfo.cs
+/home/sly/code/mothra/examples/cs/obj/Debug/netcoreapp3.0/Example.dll
+/home/sly/code/mothra/examples/cs/obj/Debug/netcoreapp3.0/Example.pdb
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/libmothra.so
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/Example.deps.json
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/Example.runtimeconfig.json
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/Example.runtimeconfig.dev.json
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/Example.dll
+/home/sly/code/mothra/examples/cs/bin/Debug/netcoreapp3.0/Example.pdb
