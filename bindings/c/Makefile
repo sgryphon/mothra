@@ -3,7 +3,7 @@ SHELL := /bin/sh
 include ../../config.mk
 
 CFLAGS:=-O2 -fPIC
-LFLAGS = -shared
+LFLAGS = -sharedi
 INCLUDES = -I$(CBIND_DIR)/
 TARGET:=$(OUT_DIR)/libmothra-ingress.$(EXT)
 
