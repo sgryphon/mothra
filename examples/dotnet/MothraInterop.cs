@@ -36,9 +36,8 @@ namespace Example
         public static extern unsafe void SendResponse(byte* methodUtf8, int methodLength, byte* peerUtf8, int peerLength, byte* data, int dataLength);
 
         [DllImport(IngressDllName, EntryPoint = "libp2p_register_handlers", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern unsafe void RegisterHandlers(DiscoveredPeer discoveredPeer, ReceiveGossip receiveGossip, ReceiveRpc receiveRpc);
-        public static extern unsafe void RegisterHandlers(IntPtr discoveredPeer, IntPtr receiveGossip, IntPtr receiveRpc);
-        // [MarshalAs(UnmanagedType.FunctionPtr)]
+        public static extern unsafe void RegisterHandlers(DiscoveredPeer discoveredPeer, ReceiveGossip receiveGossip, ReceiveRpc receiveRpc);
+        //public static extern unsafe void RegisterHandlers(IntPtr discoveredPeer, IntPtr receiveGossip, IntPtr receiveRpc);
         
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public unsafe delegate void DiscoveredPeer(byte* peerUtf8, int peerLength);

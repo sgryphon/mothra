@@ -53,20 +53,20 @@ namespace Example
             MothraInterop.ReceiveRpc receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
 
             // as delegates
-            //s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeer);
-            //s_receiveGossipHandle = GCHandle.Alloc(receiveGossip);            
-            //s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
+            s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeer);
+            s_receiveGossipHandle = GCHandle.Alloc(receiveGossip);            
+            s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
             
             // as pointers
-            IntPtr discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
-            IntPtr receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
-            IntPtr receiveRpcPtr = Marshal.GetFunctionPointerForDelegate(receiveRpc);
-            s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeerPtr, GCHandleType.Pinned);
-            s_receiveGossipHandle = GCHandle.Alloc(receiveGossipPtr, GCHandleType.Pinned);            
-            s_receiveRpcHandle = GCHandle.Alloc(receiveRpcPtr, GCHandleType.Pinned);
+            //IntPtr discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
+            //IntPtr receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
+            //IntPtr receiveRpcPtr = Marshal.GetFunctionPointerForDelegate(receiveRpc);
+            //s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeerPtr, GCHandleType.Pinned);
+            //s_receiveGossipHandle = GCHandle.Alloc(receiveGossipPtr, GCHandleType.Pinned);            
+            //s_receiveRpcHandle = GCHandle.Alloc(receiveRpcPtr, GCHandleType.Pinned);
             
-            //MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
-            MothraInterop.RegisterHandlers(discoveredPeerPtr, receiveGossipPtr, receiveRpcPtr);
+            MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
+            //MothraInterop.RegisterHandlers(discoveredPeerPtr, receiveGossipPtr, receiveRpcPtr);
             MothraInterop.Start(args, args.Length);
         }
         
