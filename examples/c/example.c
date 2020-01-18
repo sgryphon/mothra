@@ -34,6 +34,6 @@ int main (int argc, char** argv) {
         int topic_length = (int)(strlen(topic));
         char* data = "Hello from C";
         int data_length = (int)(strlen(data));
-        libp2p_send_gossip(topic, topic_length, data, data_length);
+        libp2p_send_gossip((unsigned char*)topic, topic_length, (unsigned char*)data, data_length);
     }
 }

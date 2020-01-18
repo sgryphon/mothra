@@ -134,30 +134,30 @@ namespace Example
             fixed (byte* topicUtf8Ptr = topicUtf8)
             fixed (byte* dataPtr = data)
             {
-                MothraInterop.SendGossip((sbyte*)topicUtf8Ptr, topicUtf8.Length, (sbyte*)dataPtr, data.Length);
+                MothraInterop.SendGossip(topicUtf8Ptr, topicUtf8.Length, dataPtr, data.Length);
             }
         }
     }
 
     public class Handlers
     {
-        public unsafe void OnDiscoveredPeer(sbyte* peerUtf8, int peerLength)
+        public unsafe void OnDiscoveredPeer(byte* peerUtf8, int peerLength)
         {
             Console.Write("dotnet: peer");
-            string peer = new String(peerUtf8, 0, peerLength, Encoding.UTF8);
+            string peer = new String((sbyte*)peerUtf8, 0, peerLength, Encoding.UTF8);
             Console.WriteLine($" discovered {peer}");
         }
 
-        public unsafe void OnReceiveGossip(sbyte* topicUtf8, int topicLength, sbyte* data, int dataLength)
+        public unsafe void OnReceiveGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength)
         {
             Console.Write("dotnet: receive");
-            string topic = new String(topicUtf8, 0, topicLength, Encoding.UTF8);
-            string dataString = new String(data, 0, dataLength, Encoding.UTF8);
+            string topic = new String((sbyte*)topicUtf8, 0, topicLength, Encoding.UTF8);
+            string dataString = new String((sbyte*)data, 0, dataLength, Encoding.UTF8);
             Console.WriteLine($" gossip={topic},data={dataString}");
         }
 
-        public unsafe void OnReceiveRpc(sbyte* methodUtf8, int methodLength, int requestResponseFlag, sbyte* peerUtf8,
-            int peerLength, sbyte* data, int dataLength)
+        public unsafe void OnReceiveRpc(byte* methodUtf8, int methodLength, int requestResponseFlag, byte* peerUtf8,
+            int peerLength, byte* data, int dataLength)
         {
             // Nothing
         }
