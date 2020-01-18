@@ -16,10 +16,12 @@ void libp2p_register_handlers(
 }
 
 void discovered_peer(const unsigned char* peer_utf8, int peer_length) {
+    //printf("bind: peer=%.*s\n", peer_length, peer_utf8);
     s_discovered_peer_ptr(peer_utf8, peer_length);
 }
 
 void receive_gossip(const unsigned char* topic_utf8, int topic_length, unsigned char* data, int data_length) {
+    //printf("bind: gossip=%.*s\n", topic_length, topic_utf8);
     s_receive_gossip_ptr(topic_utf8, topic_length, data, data_length);
 }
 

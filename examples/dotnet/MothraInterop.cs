@@ -27,25 +27,25 @@ namespace Example
         public static extern unsafe void Start([In, Out] string[] args, int length);
 
         [DllImport(DllName, EntryPoint = "libp2p_send_gossip", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe void SendGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength);
+        public static extern unsafe void SendGossip(sbyte* topicUtf8, int topicLength, sbyte* data, int dataLength);
 
         [DllImport(DllName, EntryPoint = "libp2p_send_rpc_request", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe void SendRequest(byte* methodUtf8, int methodLength, byte* peerUtf8, int peerLength, byte* data, int dataLength);
+        public static extern unsafe void SendRequest(sbyte* methodUtf8, int methodLength, sbyte* peerUtf8, int peerLength, sbyte* data, int dataLength);
 
         [DllImport(DllName, EntryPoint = "libp2p_send_rpc_response", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe void SendResponse(byte* methodUtf8, int methodLength, byte* peerUtf8, int peerLength, byte* data, int dataLength);
+        public static extern unsafe void SendResponse(sbyte* methodUtf8, int methodLength, sbyte* peerUtf8, int peerLength, sbyte* data, int dataLength);
 
         [DllImport(IngressDllName, EntryPoint = "libp2p_register_handlers", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void RegisterHandlers(DiscoveredPeer discoveredPeer, ReceiveGossip receiveGossip, ReceiveRpc receiveRpc);
         //public static extern unsafe void RegisterHandlers(IntPtr discoveredPeer, IntPtr receiveGossip, IntPtr receiveRpc);
         
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public unsafe delegate void DiscoveredPeer(byte* peerUtf8, int peerLength);
+        public unsafe delegate void DiscoveredPeer(sbyte* peerUtf8, int peerLength);
         
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public unsafe delegate void ReceiveGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength);
+        public unsafe delegate void ReceiveGossip(sbyte* topicUtf8, int topicLength, sbyte* data, int dataLength);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public unsafe delegate void ReceiveRpc(byte* methodUtf8, int methodLength, int requestResponseFlag, byte* peerUtf8, int peerLength, byte* data, int dataLength);
+        public unsafe delegate void ReceiveRpc(sbyte* methodUtf8, int methodLength, int requestResponseFlag, sbyte* peerUtf8, int peerLength, sbyte* data, int dataLength);
     }
 }

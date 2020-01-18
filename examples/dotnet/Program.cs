@@ -16,6 +16,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Example
 {
@@ -34,11 +35,19 @@ namespace Example
         //     (this should match the enr of the running C native; yes, it starts with two dashes to separate program input)
         // 5. run in debug mode; it works fine (is stable)
         // 6. run without debugger: crashes on first message
+
+        // gdb --args dotnet ../../bin/Example.dll  -- --boot-nodes enr:-Iu4QOcRj-KivlPmJ8FNyYGCV7Kkub3j8OzMwXCL-iZijl8kEg4nz2J3xTP5ENqMr5QgExjP9bzI7hOHZuDWhOjsPcUBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQKVrVQHZsUqntitqKx6o6cQBmwvA78SzeCb8jTLcHY_iYN0Y3CCIyiDdWRwgiMo --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
+        // then run, gets SIGSEGV, bt
+
+        // dotnet ../../bin/Example.dll
+        // bin/example --boot-nodes enr:-Iu4QOcRj-KivlPmJ8FNyYGCV7Kkub3j8OzMwXCL-iZijl8kEg4nz2J3xTP5ENqMr5QgExjP9bzI7hOHZuDWhOjsPcUBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQKVrVQHZsUqntitqKx6o6cQBmwvA78SzeCb8jTLcHY_iYN0Y3CCIyiDdWRwgiMo --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
+
+        private static Handlers s_handlers;
         
         private static GCHandle s_discoveredPeerHandle;
         private static GCHandle s_receiveGossipHandle;
         private static GCHandle s_receiveRpcHandle;
-        
+
         private static MothraInterop.DiscoveredPeer s_discoveredPeer;
         private static MothraInterop.ReceiveGossip s_receiveGossip;
         private static MothraInterop.ReceiveRpc s_receiveRpc;
@@ -47,40 +56,52 @@ namespace Example
         private static IntPtr s_receiveGossipPtr;
         private static IntPtr s_receiveRpcPtr;
 
+        private static GCHandle s_args;
+        
         static async Task Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+
             Console.WriteLine("Press CTRL+C to exit");
             Start(args);
+            
             while (true)
             {
                 await Task.Delay(TimeSpan.FromSeconds(10));
-                
+
                 string message = string.Format("Hello libp2p from .NET {0:s}", DateTimeOffset.Now);
                 Console.WriteLine($"dotnet: Sending {message}");
-                
+
                 byte[] data = Encoding.UTF8.GetBytes(message);
-                
+
                 SendGossip("/eth2/beacon_block/ssz", data);
             }
         }
-        
+
+        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine("Unhandled: {0}", e);
+        }
+
         public static unsafe void Start(string[] args)
         {
+            s_handlers = new Handlers();
+            
             // MothraInterop.DiscoveredPeer discoveredPeer = new MothraInterop.DiscoveredPeer(OnDiscoveredPeer);
             // MothraInterop.ReceiveGossip receiveGossip = new MothraInterop.ReceiveGossip(OnReceiveGossip);
             // MothraInterop.ReceiveRpc receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
-            s_discoveredPeer = new MothraInterop.DiscoveredPeer(OnDiscoveredPeer);
-            s_receiveGossip = new MothraInterop.ReceiveGossip(OnReceiveGossip);
-            s_receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
+            s_discoveredPeer = new MothraInterop.DiscoveredPeer(s_handlers.OnDiscoveredPeer);
+            s_receiveGossip = new MothraInterop.ReceiveGossip(s_handlers.OnReceiveGossip);
+            s_receiveRpc = new MothraInterop.ReceiveRpc(s_handlers.OnReceiveRpc);
 
             // as delegates
             // s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeer);
             // s_receiveGossipHandle = GCHandle.Alloc(receiveGossip);            
             // s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
             s_discoveredPeerHandle = GCHandle.Alloc(s_discoveredPeer);
-            s_receiveGossipHandle = GCHandle.Alloc(s_receiveGossip);            
+            s_receiveGossipHandle = GCHandle.Alloc(s_receiveGossip);
             s_receiveRpcHandle = GCHandle.Alloc(s_receiveRpc);
-            
+
             // as pointers
             // IntPtr discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
             // IntPtr receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
@@ -88,7 +109,7 @@ namespace Example
             // s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeerPtr, GCHandleType.Pinned);
             // s_receiveGossipHandle = GCHandle.Alloc(receiveGossipPtr, GCHandleType.Pinned);            
             // s_receiveRpcHandle = GCHandle.Alloc(receiveRpcPtr, GCHandleType.Pinned);
-            
+
             // as static field pointers
             // s_discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
             // s_receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
@@ -96,41 +117,47 @@ namespace Example
             // s_discoveredPeerHandle = GCHandle.Alloc(s_discoveredPeerPtr, GCHandleType.Pinned);
             // s_receiveGossipHandle = GCHandle.Alloc(s_receiveGossipPtr, GCHandleType.Pinned);            
             // s_receiveRpcHandle = GCHandle.Alloc(s_receiveRpcPtr, GCHandleType.Pinned);
-            
+
             //MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
             MothraInterop.RegisterHandlers(s_discoveredPeer, s_receiveGossip, s_receiveRpc);
+            Thread.Sleep(1000);
             //MothraInterop.RegisterHandlers(discoveredPeerPtr, receiveGossipPtr, receiveRpcPtr);
             // MothraInterop.RegisterHandlers(s_discoveredPeerPtr, s_receiveGossipPtr, s_receiveRpcPtr);
+
+            s_args = GCHandle.Alloc(args);
             MothraInterop.Start(args, args.Length);
         }
-        
+
         public static unsafe void SendGossip(string topic, ReadOnlySpan<byte> data)
         {
             byte[] topicUtf8 = Encoding.UTF8.GetBytes(topic);
             fixed (byte* topicUtf8Ptr = topicUtf8)
             fixed (byte* dataPtr = data)
             {
-                MothraInterop.SendGossip(topicUtf8Ptr, topicUtf8.Length, dataPtr, data.Length);
+                MothraInterop.SendGossip((sbyte*)topicUtf8Ptr, topicUtf8.Length, (sbyte*)dataPtr, data.Length);
             }
         }
+    }
 
-        private static unsafe void OnDiscoveredPeer(byte* peerUtf8, int peerLength)
+    public class Handlers
+    {
+        public unsafe void OnDiscoveredPeer(sbyte* peerUtf8, int peerLength)
         {
             Console.Write("dotnet: peer");
-            string peer = new String((sbyte*)peerUtf8, 0, peerLength, Encoding.UTF8);
+            string peer = new String(peerUtf8, 0, peerLength, Encoding.UTF8);
             Console.WriteLine($" discovered {peer}");
         }
 
-        private static unsafe void OnReceiveGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength)
+        public unsafe void OnReceiveGossip(sbyte* topicUtf8, int topicLength, sbyte* data, int dataLength)
         {
             Console.Write("dotnet: receive");
-            string topic = new String((sbyte*)topicUtf8, 0, topicLength, Encoding.UTF8);
-            string dataString = new String((sbyte*)data, 0, dataLength, Encoding.UTF8);
+            string topic = new String(topicUtf8, 0, topicLength, Encoding.UTF8);
+            string dataString = new String(data, 0, dataLength, Encoding.UTF8);
             Console.WriteLine($" gossip={topic},data={dataString}");
         }
 
-        private static unsafe void OnReceiveRpc(byte* methodUtf8, int methodLength, int requestResponseFlag, byte* peerUtf8,
-            int peerLength, byte* data, int dataLength)
+        public unsafe void OnReceiveRpc(sbyte* methodUtf8, int methodLength, int requestResponseFlag, sbyte* peerUtf8,
+            int peerLength, sbyte* data, int dataLength)
         {
             // Nothing
         }
