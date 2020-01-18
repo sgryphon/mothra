@@ -25,9 +25,23 @@ namespace Example
         //  make c
         //  dotnet run --project examples/dotnet
 
+        // HACK: Working when debugger attached (on Linux)
+        // 1. build c-bindings: make c
+        // 2. run C native in one console: bin/example
+        // 3. open Example.csproj in Jetbrains Rider
+        // 4. set program arguments in debug configuration:
+        //     -- --boot-nodes enr:-Iu4QOcRj-KivlPmJ8FNyYGCV7Kkub3j8OzMwXCL-iZijl8kEg4nz2J3xTP5ENqMr5QgExjP9bzI7hOHZuDWhOjsPcUBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQKVrVQHZsUqntitqKx6o6cQBmwvA78SzeCb8jTLcHY_iYN0Y3CCIyiDdWRwgiMo --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
+        //     (this should match the enr of the running C native; yes, it starts with two dashes to separate program input)
+        // 5. run in debug mode; it works fine (is stable)
+        // 6. run without debugger: crashes on first message
+        
         private static GCHandle s_discoveredPeerHandle;
         private static GCHandle s_receiveGossipHandle;
         private static GCHandle s_receiveRpcHandle;
+
+        private static IntPtr s_discoveredPeerPtr;
+        private static IntPtr s_receiveGossipPtr;
+        private static IntPtr s_receiveRpcPtr;
 
         static async Task Main(string[] args)
         {
@@ -58,15 +72,24 @@ namespace Example
             s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
             
             // as pointers
-            //IntPtr discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
-            //IntPtr receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
-            //IntPtr receiveRpcPtr = Marshal.GetFunctionPointerForDelegate(receiveRpc);
-            //s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeerPtr, GCHandleType.Pinned);
-            //s_receiveGossipHandle = GCHandle.Alloc(receiveGossipPtr, GCHandleType.Pinned);            
-            //s_receiveRpcHandle = GCHandle.Alloc(receiveRpcPtr, GCHandleType.Pinned);
+            // IntPtr discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
+            // IntPtr receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
+            // IntPtr receiveRpcPtr = Marshal.GetFunctionPointerForDelegate(receiveRpc);
+            // s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeerPtr, GCHandleType.Pinned);
+            // s_receiveGossipHandle = GCHandle.Alloc(receiveGossipPtr, GCHandleType.Pinned);            
+            // s_receiveRpcHandle = GCHandle.Alloc(receiveRpcPtr, GCHandleType.Pinned);
+            
+            // as static field pointers
+            // s_discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
+            // s_receiveGossipPtr = Marshal.GetFunctionPointerForDelegate(receiveGossip);
+            // s_receiveRpcPtr = Marshal.GetFunctionPointerForDelegate(receiveRpc);
+            // s_discoveredPeerHandle = GCHandle.Alloc(s_discoveredPeerPtr, GCHandleType.Pinned);
+            // s_receiveGossipHandle = GCHandle.Alloc(s_receiveGossipPtr, GCHandleType.Pinned);            
+            // s_receiveRpcHandle = GCHandle.Alloc(s_receiveRpcPtr, GCHandleType.Pinned);
             
             MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
             //MothraInterop.RegisterHandlers(discoveredPeerPtr, receiveGossipPtr, receiveRpcPtr);
+            // MothraInterop.RegisterHandlers(s_discoveredPeerPtr, s_receiveGossipPtr, s_receiveRpcPtr);
             MothraInterop.Start(args, args.Length);
         }
         
