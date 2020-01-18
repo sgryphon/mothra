@@ -18,8 +18,9 @@ namespace Example
 {
     internal static class MothraInterop
     {
-        // This will search and load mothra.dll on Windows, and libmothra.so on Linux
+        // mothra.dll on Windows, libmothra.so on Linux, libmotha.dylib on OSX
         private const string DllName = "mothra";
+        private const string IngressDllName = "mothra-ingress";
         
         [DllImport(DllName, EntryPoint = "libp2p_start", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void Start([In, Out] string[] args, int length);
@@ -33,19 +34,17 @@ namespace Example
         [DllImport(DllName, EntryPoint = "libp2p_send_rpc_response")]
         public static extern unsafe void SendResponse(byte* methodUtf8, int methodLength, byte* peerUtf8, int peerLength, byte* data, int dataLength);
 
-        // Java
-        //extern void libp2p_start(char**, int);
-        //extern void libp2p_send_gossip(jbyte*, int, jbyte*, int);
-        //extern void libp2p_send_rpc_request(jbyte*, int, jbyte*, int, jbyte*, int);
-        //extern void libp2p_send_rpc_response(jbyte*, int, jbyte*, int, jbyte*, int);
-        //void discovered_peer(const unsigned char*, int);
-        //void receive_gossip(const unsigned char*, int, unsigned char*, int);
-        //void receive_rpc(const unsigned char*, int, int, const unsigned char*, int, unsigned char*, int);
+        [DllImport(IngressDllName, EntryPoint = "libp2p_register_handlers")]
+        public static extern unsafe void RegisterHandlers(DiscoveredPeer discoveredPeer, ReceiveGossip receiveGossip, ReceiveRpc receiveRpc);
+        
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate void DiscoveredPeer(byte* peerUtf8, int peerLength);
+        
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate void ReceiveGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength);
 
-        // C
-        //extern void libp2p_start(char**, int length);
-        //extern void libp2p_send_gossip(unsigned char*, int length);
-        //void receive_gossip(unsigned char*);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate void ReceiveRpc(byte* methodUtf8, int methodLength, int requestResponseFlag, byte* peerUtf8, int peerLength, byte* data, int dataLength);
 
     }
 }
