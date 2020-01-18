@@ -38,6 +38,10 @@ namespace Example
         private static GCHandle s_discoveredPeerHandle;
         private static GCHandle s_receiveGossipHandle;
         private static GCHandle s_receiveRpcHandle;
+        
+        private static MothraInterop.DiscoveredPeer s_discoveredPeer;
+        private static MothraInterop.ReceiveGossip s_receiveGossip;
+        private static MothraInterop.ReceiveRpc s_receiveRpc;
 
         private static IntPtr s_discoveredPeerPtr;
         private static IntPtr s_receiveGossipPtr;
@@ -62,14 +66,20 @@ namespace Example
         
         public static unsafe void Start(string[] args)
         {
-            MothraInterop.DiscoveredPeer discoveredPeer = new MothraInterop.DiscoveredPeer(OnDiscoveredPeer);
-            MothraInterop.ReceiveGossip receiveGossip = new MothraInterop.ReceiveGossip(OnReceiveGossip);
-            MothraInterop.ReceiveRpc receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
+            // MothraInterop.DiscoveredPeer discoveredPeer = new MothraInterop.DiscoveredPeer(OnDiscoveredPeer);
+            // MothraInterop.ReceiveGossip receiveGossip = new MothraInterop.ReceiveGossip(OnReceiveGossip);
+            // MothraInterop.ReceiveRpc receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
+            s_discoveredPeer = new MothraInterop.DiscoveredPeer(OnDiscoveredPeer);
+            s_receiveGossip = new MothraInterop.ReceiveGossip(OnReceiveGossip);
+            s_receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
 
             // as delegates
-            s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeer);
-            s_receiveGossipHandle = GCHandle.Alloc(receiveGossip);            
-            s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
+            // s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeer);
+            // s_receiveGossipHandle = GCHandle.Alloc(receiveGossip);            
+            // s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
+            s_discoveredPeerHandle = GCHandle.Alloc(s_discoveredPeer);
+            s_receiveGossipHandle = GCHandle.Alloc(s_receiveGossip);            
+            s_receiveRpcHandle = GCHandle.Alloc(s_receiveRpc);
             
             // as pointers
             // IntPtr discoveredPeerPtr = Marshal.GetFunctionPointerForDelegate(discoveredPeer);
@@ -87,7 +97,8 @@ namespace Example
             // s_receiveGossipHandle = GCHandle.Alloc(s_receiveGossipPtr, GCHandleType.Pinned);            
             // s_receiveRpcHandle = GCHandle.Alloc(s_receiveRpcPtr, GCHandleType.Pinned);
             
-            MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
+            //MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
+            MothraInterop.RegisterHandlers(s_discoveredPeer, s_receiveGossip, s_receiveRpc);
             //MothraInterop.RegisterHandlers(discoveredPeerPtr, receiveGossipPtr, receiveRpcPtr);
             // MothraInterop.RegisterHandlers(s_discoveredPeerPtr, s_receiveGossipPtr, s_receiveRpcPtr);
             MothraInterop.Start(args, args.Length);
