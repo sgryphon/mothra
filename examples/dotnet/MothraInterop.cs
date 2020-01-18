@@ -25,16 +25,16 @@ namespace Example
         [DllImport(DllName, EntryPoint = "libp2p_start", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void Start([In, Out] string[] args, int length);
 
-        [DllImport(DllName, EntryPoint = "libp2p_send_gossip")]
+        [DllImport(DllName, EntryPoint = "libp2p_send_gossip", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void SendGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength);
 
-        [DllImport(DllName, EntryPoint = "libp2p_send_rpc_request")]
+        [DllImport(DllName, EntryPoint = "libp2p_send_rpc_request", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void SendRequest(byte* methodUtf8, int methodLength, byte* peerUtf8, int peerLength, byte* data, int dataLength);
 
-        [DllImport(DllName, EntryPoint = "libp2p_send_rpc_response")]
+        [DllImport(DllName, EntryPoint = "libp2p_send_rpc_response", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void SendResponse(byte* methodUtf8, int methodLength, byte* peerUtf8, int peerLength, byte* data, int dataLength);
 
-        [DllImport(IngressDllName, EntryPoint = "libp2p_register_handlers")]
+        [DllImport(IngressDllName, EntryPoint = "libp2p_register_handlers", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void RegisterHandlers(DiscoveredPeer discoveredPeer, ReceiveGossip receiveGossip, ReceiveRpc receiveRpc);
         
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -45,6 +45,5 @@ namespace Example
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public unsafe delegate void ReceiveRpc(byte* methodUtf8, int methodLength, int requestResponseFlag, byte* peerUtf8, int peerLength, byte* data, int dataLength);
-
     }
 }
