@@ -22,11 +22,31 @@ namespace Example
 {
     class Program
     {
-        // Build the c-bindings, then run single node to check it works:
+        // To build, from root of mothra project, this will build the
+        // C-bindings, then compile the dotnet DLL:
+        //  make dotnet
+
+        // Also make the C native client (for demo)
+        //  make c
+
+        // To run example program:
+        //  dotnet bin/dotnet/Example.dll
+
+        // To demo, open a second console and, run the C native client (on a different port):
+        //  bin/example --boot-nodes $(cat ~/.mothra/network/enr.dat) --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.mothra9001
+
+        // Open a third console and run a third client (dotnet):
+        //  dotnet bin/dotnet/Example.dll -- --boot-nodes $(cat ~/.mothra/network/enr.dat) --listen-address 127.0.0.1 --port 9002 --datadir /tmp/.mothra9002
+
+        // You can also start C-native first, i.e.:
+        //  bin/example
+        //  dotnet bin/dotnet/Example.dll -- --boot-nodes $(cat ~/.mothra/network/enr.dat) --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.mothra9001
+
+        // Note: you can also run dotnet project directly (with c-bindings):
         //  make c
         //  dotnet run --project examples/dotnet
 
-        // HACK: Working when debugger attached (on Linux)
+        // HACK: On Linux only working when debugger attached:
         // 1. build c-bindings: make c
         // 2. run C native in one console: bin/example
         // 3. open Example.csproj in Jetbrains Rider
@@ -36,15 +56,9 @@ namespace Example
         // 5. run in debug mode; it works fine (is stable)
         // 6. run without debugger: crashes on first message
 
+        // To see the error:
         // gdb --args dotnet ../../bin/Example.dll  -- --boot-nodes enr:-Iu4QOcRj-KivlPmJ8FNyYGCV7Kkub3j8OzMwXCL-iZijl8kEg4nz2J3xTP5ENqMr5QgExjP9bzI7hOHZuDWhOjsPcUBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQKVrVQHZsUqntitqKx6o6cQBmwvA78SzeCb8jTLcHY_iYN0Y3CCIyiDdWRwgiMo --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
         // then run, gets SIGSEGV, bt
-
-        // dotnet ../../bin/Example.dll
-        // bin/example --boot-nodes enr:-Iu4QOcRj-KivlPmJ8FNyYGCV7Kkub3j8OzMwXCL-iZijl8kEg4nz2J3xTP5ENqMr5QgExjP9bzI7hOHZuDWhOjsPcUBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQKVrVQHZsUqntitqKx6o6cQBmwvA78SzeCb8jTLcHY_iYN0Y3CCIyiDdWRwgiMo --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
-
-        // dotnet ../../bin/Example.dll -- --boot-nodes enr:-Iu4QOcRj-KivlPmJ8FNyYGCV7Kkub3j8OzMwXCL-iZijl8kEg4nz2J3xTP5ENqMr5QgExjP9bzI7hOHZuDWhOjsPcUBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQKVrVQHZsUqntitqKx6o6cQBmwvA78SzeCb8jTLcHY_iYN0Y3CCIyiDdWRwgiMo --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
-
-        // dotnet ./../../bin/Example.dll -- --boot-nodes $(cat ~/.mothra/network/enr.dat) --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
 
         private static Handlers s_handlers;
         
