@@ -15,27 +15,81 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace Example
 {
     class Program
     {
-        // dotnet run . -- --boot-nodes $(cat ~/.mothra/network/enr.dat) --listen-address 127.0.0.1 --port 9002 --datadir /tmp/.netcore
+        // Build the c-bindings, then run single node to check it works:
+        //  make c
+        //  dotnet run --project examples/dotnet
+
+        private static GCHandle s_discoveredPeerHandle;
+        private static GCHandle s_receiveGossipHandle;
+        private static GCHandle s_receiveRpcHandle;
+
         static async Task Main(string[] args)
         {
-            MothraLibp2p mothra = new MothraLibp2p();
-            mothra.Start(args);
-
             Console.WriteLine("Press CTRL+C to exit");
+            Start(args);
             while (true)
             {
                 await Task.Delay(TimeSpan.FromSeconds(10));
+                
                 string message = string.Format("Hello libp2p from .NET {0:s}", DateTimeOffset.Now);
-                Console.WriteLine($"Sending {message}");
+                Console.WriteLine($"dotnet: Sending {message}");
+                
                 byte[] data = Encoding.UTF8.GetBytes(message);
-                mothra.SendGossip("/eth2/beacon_block/ssz", data);
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                
+                SendGossip("/eth2/beacon_block/ssz", data);
             }
+        }
+        
+        public static unsafe void Start(string[] args)
+        {
+            MothraInterop.DiscoveredPeer discoveredPeer = new MothraInterop.DiscoveredPeer(OnDiscoveredPeer);
+            MothraInterop.ReceiveGossip receiveGossip = new MothraInterop.ReceiveGossip(OnReceiveGossip);
+            MothraInterop.ReceiveRpc receiveRpc = new MothraInterop.ReceiveRpc(OnReceiveRpc);
+
+            // prevent garbage collection
+            s_discoveredPeerHandle = GCHandle.Alloc(discoveredPeer);            
+            s_receiveGossipHandle = GCHandle.Alloc(receiveGossip);            
+            s_receiveRpcHandle = GCHandle.Alloc(receiveRpc);
+            
+            MothraInterop.RegisterHandlers(discoveredPeer, receiveGossip, receiveRpc);
+            MothraInterop.Start(args, args.Length);
+        }
+        
+        public static unsafe void SendGossip(string topic, ReadOnlySpan<byte> data)
+        {
+            byte[] topicUtf8 = Encoding.UTF8.GetBytes(topic);
+            fixed (byte* topicUtf8Ptr = topicUtf8)
+            fixed (byte* dataPtr = data)
+            {
+                MothraInterop.SendGossip(topicUtf8Ptr, topicUtf8.Length, dataPtr, data.Length);
+            }
+        }
+
+        private static unsafe void OnDiscoveredPeer(byte* peerUtf8, int peerLength)
+        {
+            Console.Write("dotnet: peer");
+            string peer = new String((sbyte*)peerUtf8, 0, peerLength, Encoding.UTF8);
+            Console.WriteLine($" discovered {peer}");
+        }
+
+        private static unsafe void OnReceiveGossip(byte* topicUtf8, int topicLength, byte* data, int dataLength)
+        {
+            Console.Write("dotnet: receive");
+            string topic = new String((sbyte*)topicUtf8, 0, topicLength, Encoding.UTF8);
+            string dataString = new String((sbyte*)data, 0, dataLength, Encoding.UTF8);
+            Console.WriteLine($" gossip={topic},data={dataString}");
+        }
+
+        private static unsafe void OnReceiveRpc(byte* methodUtf8, int methodLength, int requestResponseFlag, byte* peerUtf8,
+            int peerLength, byte* data, int dataLength)
+        {
+            // Nothing
         }
     }
 }
