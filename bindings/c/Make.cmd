@@ -7,12 +7,13 @@ set CORE_DIR=%ROOT_DIR%/core
 set BIND_DIR=%ROOT_DIR%/bindings
 set CBIND_DIR=%BIND_DIR%/c
 
-set CFLAGS=/W4 /O2 /EHsc
+set CFLAGS=/W4 /O2 /EHsc /MD
 set LFLAGS=
 set INCLUDES=
 set OBJ=%OUT_DIR%/mothra-ingress.obj
-set TARGET=%OUT_DIR%/mothra-ingress.%EXT%
+set TARGET=%OUT_DIR%/mothra-ingress.lib
 
 if not exist "%OUT_DIR%" ( mkdir "%OUT_DIR%" )
 if exist "%TARGET%" ( del "%TARGET%" )
-cl /LD %CFLAGS% "%CBIND_DIR%/mothra.c" /Fe"%TARGET%" /Fo"%OBJ%"
+cl /c /LD %CFLAGS% "%CBIND_DIR%/mothra.c" /Fo"%OBJ%"
+lib "%OBJ%" /out:"%TARGET%"
