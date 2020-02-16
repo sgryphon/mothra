@@ -6,6 +6,8 @@ Mothra was created to house native language bindings between [Rust-LibP2P](https
 
 - C
 - Java
+- .Net
+- Rust (duh)
 
 ### The Thing That Should Not Be
 
@@ -21,14 +23,14 @@ Mothra is wire protocol agnostic and intended to provide a simple API that requi
 - PubSub
   - event subscription
   - send/receive
-- RPC (not yet implemented)
+- RPC
   - send/receive
 
 
 
-### Prereqs
+### MacOS Prereqs
 
-On OSX:
+Rust:
 
 Install rustup so you can switch between Rust versions:
 
@@ -45,6 +47,8 @@ Install the Rust compiler and package manager:
 > rustup-init
 
 ```
+
+DotNet:
 
 Install dotnet sdk [here](https://download.visualstudio.microsoft.com/download/pr/749db4bc-73c3-4ffb-a545-c315dc9a0ca8/5281258f5dcae636efe557b8b305e20b/dotnet-sdk-3.1.101-osx-x64.pkg)
 
@@ -68,7 +72,9 @@ path-to-application:
 > Note: if you receive an error message make sure you are working from a new Terminal session
 
 
-`tmux` is the last prereq, but it is optional.  Installing it will make running the demo easier:
+`tmux` (optional):
+
+Installing this will make running the demo easier:
 
 ```sh
 
@@ -120,6 +126,16 @@ Next cd into the project's root dir and build:
 
 ```
 
+#### Build for DotNet
+
+Next cd into the project's root dir and build:
+
+```sh
+
+> make dotnet
+
+```
+
 #### Build on Windows
 
 Run the build scripts a in Visual Studio x64 Native Tools Command Prompt.
@@ -156,24 +172,6 @@ If you have `tmux` installed, it is a little simpler to run:
 
 ```
 
-If you don't have `tmux` installed and don't want to, then as long as you have followed all the instructions above, then it should work.  
-
-In one terminal run:
-
-```sh
-
-> ./bin/example
-
-```
-
-In a second terminal run:
-
-```sh
-
-> ./example --boot-nodes -IW4QA-kin8iSkXbYod9kVfizxFDK9_b8wl7-dBCB1wPTowWUSDIuz05ywYbluGqGvcIyfSJaE0vRtxuJyDxMoSkIpUBgmlwhH8AAAGDdGNwgiMog3VkcIIjKIlzZWNwMjU2azGhAgu2W7T48VatZVXuvpCSFLtzKGgCYpHUcNO-zT7wELLP --listen-address 127.0.0.1 --port 9001 --datadir /tmp/.artemis
-
-```
-
 #### Run Sample App (Java)
 
 The sample app demonstrates two clients using Disv5 to find each other and the use of GossipSub to send messages back and forth.
@@ -183,6 +181,18 @@ If you have `tmux` installed, it is a little simpler to run:
 ```sh
 
 > cd examples/java && sh peerDemo.sh
+
+```
+
+#### Run Sample App (DotNet)
+
+The sample app demonstrates two clients using Disv5 to find each other and the use of GossipSub to send messages back and forth.
+
+If you have `tmux` installed, it is a little simpler to run:
+
+```sh
+
+> cd examples/dotnet && sh peerDemo.sh
 
 ```
 

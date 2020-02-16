@@ -23,7 +23,7 @@ EXPORT void libp2p_register_handlers(
    void (*receive_gossip_ptr)(const unsigned char* topic_utf8, int topic_length, unsigned char* data, int data_length), 
    void (*receive_rpc_ptr)(const unsigned char* method_utf8, int method_length, int req_resp, const unsigned char* peer_utf8, int peer_length, unsigned char* data, int data_length)
 );
-
+       
 // Events functions called by Core
 
 void ingress_register_handlers(
