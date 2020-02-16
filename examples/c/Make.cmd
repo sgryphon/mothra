@@ -14,4 +14,4 @@ set TARGET=%OUT_DIR%\example.exe
 if not exist "%OUT_DIR%" ( mkdir "%OUT_DIR%" )
 if exist "%TARGET%" ( del "%TARGET%" )
 cl /c %CFLAGS% "example.c" %INCLUDES% /Fo"%OBJ%"
-link mothra.dll.lib mothra-ingress.lib "%OBJ%" %LFLAGS% /OUT:"%TARGET%"
+link mothra.dll.lib "%OBJ%" %LFLAGS% /OUT:"%TARGET%"
