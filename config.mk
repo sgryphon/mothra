@@ -1,5 +1,6 @@
 OS:=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 CC:=gcc
+AR:=ar
 ifeq ($(OS), linux)
 	EXT:=so
 	OS_LFLAGS:=
