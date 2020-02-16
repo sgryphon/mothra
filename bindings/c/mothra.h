@@ -5,10 +5,10 @@
 extern "C" {
 #endif
 
-void libp2p_start(char** args, int length);
-void libp2p_send_gossip(unsigned char* topic_utf8, int topic_length, unsigned char* data, int data_length);
-void libp2p_send_rpc_request(unsigned char* method_utf8, int method_length, unsigned char* peer_utf8, int peer_length, unsigned char* data, int data_length);
-void libp2p_send_rpc_response(unsigned char* method_utf8, int method_length, unsigned char* peer_utf8, int peer_length, unsigned char* data, int data_length);
+__declspec(dllexport) void libp2p_start(char** args, int length);
+__declspec(dllexport) void libp2p_send_gossip(unsigned char* topic_utf8, int topic_length, unsigned char* data, int data_length);
+__declspec(dllexport) void libp2p_send_rpc_request(unsigned char* method_utf8, int method_length, unsigned char* peer_utf8, int peer_length, unsigned char* data, int data_length);
+__declspec(dllexport) void libp2p_send_rpc_response(unsigned char* method_utf8, int method_length, unsigned char* peer_utf8, int peer_length, unsigned char* data, int data_length);
 
 __declspec(dllexport) void libp2p_register_handlers(
    void (*discovered_peer_ptr)(const unsigned char* peer_utf8, int peer_length), 

@@ -11,7 +11,12 @@ set LFLAGS=/LIBPATH:"%OUT_DIR%" /LIBPATH:"%OUT_DIR%\release" /LIBPATH:"%OUT_DIR%
 set OBJ=%OUT_DIR%\example.obj
 set TARGET=%OUT_DIR%\example.exe
 
+@echo ## Cleaning "%TARGET%"
 if not exist "%OUT_DIR%" ( mkdir "%OUT_DIR%" )
 if exist "%TARGET%" ( del "%TARGET%" )
+
+@echo ## Compiling "%OBJ%"
 cl /c %CFLAGS% "example.c" %INCLUDES% /Fo"%OBJ%"
+
+@echo ## Linking "%TARGET%"
 link mothra.dll.lib "%OBJ%" %LFLAGS% /OUT:"%TARGET%"
