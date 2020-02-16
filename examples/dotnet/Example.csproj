@@ -31,4 +31,16 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup Condition="Exists('..\..\bin\mothra.dll')">
+    <None Include="..\..\bin\mothra.dll" Link="mothra.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\bin\libcrypto*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\bin\libssl*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

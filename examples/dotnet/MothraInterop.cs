@@ -21,7 +21,8 @@ namespace Example
     {
         // mothra.dll on Windows, libmothra.so on Linux, libmotha.dylib on OSX
         private const string DllName = "mothra";
-        private const string IngressDllName = "mothra-ingress";
+        //private const string IngressDllName = "mothra-ingress";
+        private const string IngressDllName = "mothra";
         
         [DllImport(DllName, EntryPoint = "libp2p_start", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe void Start([In, Out] string[] args, int length);
