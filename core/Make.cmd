@@ -12,7 +12,7 @@ set OPENSSL_DIR=%VCPKG_DIR%\packages\openssl-windows_x64-windows
 if not exist "%VCPKG_DIR%" goto :vcpkg_missing
 if not exist "%OPENSSL_DIR%" goto :openssl_missing
 
-@echo ## Cleaning "%OUT_DIR%\release"
+@echo ## [Core] Cleaning "%OUT_DIR%\release"
 rmdir /S /Q "%OUT_DIR%\release"
 
 @echo ## Building Rust library to "%OUT_DIR%"
